@@ -1,11 +1,20 @@
-const express = require("express");
-const multer = require("multer");
-const crypto = require("crypto");
-const { Pool } = require("pg");
-const fs = require("fs");
-const app = express();
-const port = 3001;
+import express from "express";
+import bodyParser from "body-parser";
+import multer, { memoryStorage } from "multer";
+import fetch from "node-fetch";
+import { createHash } from "crypto";
+import pkg from "pg";
 
+const { Pool } = pkg;
+
+const app = express();
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT || 3001;
+
+const RECAPTCHA_SECRET_V3 = "YOUR_RECAPTCHA_V3_SECRET_KEY";
+const RECAPTCHA_SECRET_V2 = "YOUR_RECAPTCHA_V2_SECRET_KEY";
+
+// PostgreSQL connection
 const pool = new Pool({
   user: "everest",
   host: "dpg-cqj92ruehbks73c8559g-a.oregon-postgres.render.com",
@@ -14,8 +23,38 @@ const pool = new Pool({
   port: 5432,
 });
 
-const storage = multer.memoryStorage();
+// Middleware
+app.use(bodyParser.json());
+
+const storage = memoryStorage();
 const upload = multer({ storage: storage });
+
+// Endpoint to verify reCAPTCHA
+app.post("/verify-recaptcha", async (req, res) => {
+  const { token, version } = req.body;
+  const secretKey =
+    version === "v3" ? RECAPTCHA_SECRET_V3 : RECAPTCHA_SECRET_V2;
+
+  try {
+    const response = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `secret=${secretKey}&response=${token}`,
+      }
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error verifying reCAPTCHA:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to verify reCAPTCHA" });
+  }
+});
 
 // Endpoint to get random questions
 app.get("/questions", async (req, res) => {
@@ -38,7 +77,7 @@ app.post("/upload", upload.single("video"), async (req, res) => {
   }
 
   const videoBuffer = req.file.buffer;
-  const hash = crypto.createHash("sha256").update(videoBuffer).digest("hex");
+  const hash = createHash("sha256").update(videoBuffer).digest("hex");
   const question = req.body.question;
 
   try {
@@ -53,6 +92,6 @@ app.post("/upload", upload.single("video"), async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
