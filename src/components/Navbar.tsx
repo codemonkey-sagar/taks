@@ -24,10 +24,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
-<<<<<<< HEAD
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-=======
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
 
   useEffect(() => {
     if (walletAddress) {
@@ -42,10 +39,7 @@ export default function Navbar() {
         const accounts = await provider.send("eth_requestAccounts", []);
         if (Array.isArray(accounts) && typeof accounts[0] === 'string') {
           setWalletAddress(accounts[0]);
-<<<<<<< HEAD
           setIsRoleModalOpen(true); // Open the role selection modal
-=======
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
         } else {
           throw new Error("Unexpected response format");
         }
@@ -69,7 +63,6 @@ export default function Navbar() {
     }
   };
 
-<<<<<<< HEAD
   const handleRoleSelection = (role: string) => {
     console.log(`Selected Role: ${role}`);
     // Handle the role selection here, e.g., send to backend, update state, etc.
@@ -77,8 +70,6 @@ export default function Navbar() {
     setIsRoleModalOpen(false);
   };
 
-=======
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
   return (
     <header className="bg-white border-b">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
@@ -197,17 +188,13 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-<<<<<<< HEAD
 
       {/* Role Selection Modal */}
       {isRoleModalOpen && (
         <RoleSelectionModal 
-          onSelectRole={handleRoleSelection} 
-          onClose={() => setIsRoleModalOpen(false)} 
-        />
+          onSelectRole={handleRoleSelection}
+          onClose={() => setIsRoleModalOpen(false)} walletAddress={""}        />
       )}
-=======
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
     </header>
   );
 }
