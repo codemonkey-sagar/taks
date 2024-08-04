@@ -10,15 +10,16 @@ interface RoleSelectionModalProps {
 const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ onSelectRole, onClose, walletAddress }) => {
     const handleRoleSelection = async (role: string) => {
         try {
-            const response = await fetch("/save-role", {
+            const response = await fetch("http://localhost:3001/api/save-role", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ walletAddress, role }),
             });
-    
+
             if (response.ok) {
+                console.log("Role saved successfully");
                 onSelectRole(role);
             } else {
                 const errorData = await response.json();
@@ -28,7 +29,6 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ onSelectRole, o
             console.error("Error:", error);
         }
     };
-    
 
     return (
         <div className="fixed inset-0 flex justify-center items-center z-50 bg-gray-900 bg-opacity-50">

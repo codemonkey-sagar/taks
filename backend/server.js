@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import express from "express";
 import bodyParser from "body-parser";
 import multer, { memoryStorage } from "multer";
@@ -16,16 +15,6 @@ const RECAPTCHA_SECRET_V3 = "YOUR_RECAPTCHA_V3_SECRET_KEY";
 const RECAPTCHA_SECRET_V2 = "YOUR_RECAPTCHA_V2_SECRET_KEY";
 
 // PostgreSQL connection
-=======
-const express = require("express");
-const multer = require("multer");
-const crypto = require("crypto");
-const { Pool } = require("pg");
-const fs = require("fs");
-const app = express();
-const port = 3001;
-
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
 const pool = new Pool({
   user: "everest",
   host: "dpg-cqj92ruehbks73c8559g-a.oregon-postgres.render.com",
@@ -34,7 +23,6 @@ const pool = new Pool({
   port: 5432,
 });
 
-<<<<<<< HEAD
 // Middleware
 app.use(bodyParser.json());
 
@@ -68,11 +56,6 @@ app.post("/verify-recaptcha", async (req, res) => {
   }
 });
 
-=======
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
 // Endpoint to get random questions
 app.get("/questions", async (req, res) => {
   try {
@@ -94,11 +77,7 @@ app.post("/upload", upload.single("video"), async (req, res) => {
   }
 
   const videoBuffer = req.file.buffer;
-<<<<<<< HEAD
   const hash = createHash("sha256").update(videoBuffer).digest("hex");
-=======
-  const hash = crypto.createHash("sha256").update(videoBuffer).digest("hex");
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
   const question = req.body.question;
 
   try {
@@ -113,11 +92,6 @@ app.post("/upload", upload.single("video"), async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-=======
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
+  console.log(`Server running on port:  ${PORT}`);
 });

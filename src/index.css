@@ -8,10 +8,10 @@
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-/* * {
+* {
   -ms-overflow-style: none;
   scrollbar-width: none;
-} */
+}
 
 
 /* _______MODEL______________ */

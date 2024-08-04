@@ -63,9 +63,27 @@ export default function Navbar() {
     }
   };
 
-  const handleRoleSelection = (role: string) => {
+  const handleRoleSelection = async (role: string) => {
     console.log(`Selected Role: ${role}`);
-    // Handle the role selection here, e.g., send to backend, update state, etc.
+
+    try {
+      const response = await fetch("http://localhost:5000/save-role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ walletAddress, role }),
+      });
+
+      if (response.ok) {
+        console.log("Role saved successfully");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save role:", errorData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
 
     setIsRoleModalOpen(false);
   };
@@ -193,7 +211,9 @@ export default function Navbar() {
       {isRoleModalOpen && (
         <RoleSelectionModal 
           onSelectRole={handleRoleSelection}
-          onClose={() => setIsRoleModalOpen(false)} walletAddress={""}        />
+          onClose={() => setIsRoleModalOpen(false)} 
+          walletAddress={walletAddress} 
+        />
       )}
     </header>
   );

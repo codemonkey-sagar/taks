@@ -37,11 +37,15 @@ async function initializeQuestions() {
   }
 }
 
-app.use(cors());
+// Configure CORS to allow requests from your frontend
+app.use(cors({
+  origin: 'http://localhost:5173' // Update this with the correct frontend origin
+}));
+
 app.use(express.json());
 app.use("/api", routes);
 
 app.listen(port, async () => {
   await initializeQuestions();
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });

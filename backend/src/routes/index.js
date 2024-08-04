@@ -1,7 +1,5 @@
 import express from "express";
-import crypto from "crypto";
-import pool from "../db.js";
-import { upload } from "../middleware.js";
+import pool from "../db.js"; // Assuming this is your database connection
 
 const router = express.Router();
 
@@ -41,14 +39,12 @@ router.post("/upload", upload.single("video"), async (req, res) => {
   }
 });
 
-// Endpoint to save user role and wallet addresss
+// Endpoint to save user role and wallet address
 router.post("/save-role", async (req, res) => {
   const { walletAddress, role } = req.body;
 
   if (!walletAddress || !role) {
-    return res
-      .status(400)
-      .json({ error: "Wallet address and role are required." });
+    return res.status(400).json({ error: "Wallet address and role are required." });
   }
 
   try {
