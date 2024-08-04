@@ -6,7 +6,6 @@ export const content = [
   "./app/**/*.{ts,tsx}",
   "./src/**/*.{ts,tsx}",
 ];
-<<<<<<< HEAD
 export const theme = {
   colors: {
     primary: "#7DD956",
@@ -37,12 +36,6 @@ export const theme = {
       700: "#7e22ce",
     },
     white: "#ffffff",
-=======
-export const prefix = "";
-export const theme = {
-  colors: {
-    primary: "#7DD956",
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
   },
   container: {
     center: true,
