@@ -7,10 +7,7 @@ import {
   UserCircleIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
-<<<<<<< HEAD
 import RoleSelectionModal from "./ui/RoleSelectionModel";
-=======
->>>>>>> 228cdfa8568aa6f2719083c598042e91358665a0
 import Logo from "../../public/logo.png";
 
 declare global {
