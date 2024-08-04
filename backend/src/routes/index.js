@@ -41,7 +41,7 @@ router.post("/upload", upload.single("video"), async (req, res) => {
   }
 });
 
-// Endpoint to save user role and wallet address
+// Endpoint to save user role and wallet addresss
 router.post("/save-role", async (req, res) => {
   const { walletAddress, role } = req.body;
 
