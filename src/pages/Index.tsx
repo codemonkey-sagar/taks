@@ -32,12 +32,12 @@ export default function Index() {
 
         <div className="flex justify-center space-x-4 mt-8">
           <Link to="/disputes">
-            <button className="px-6 py-2 font-semibold text-white bg-black border border-black rounded-md hover:bg-gray-800 hover:border-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
+            <button className="px-6 py-2 font-semibold text-black hover:text-white bg-black border border-black rounded-md hover:bg-gray-800 hover:border-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
               Check Disputes
             </button>
           </Link>
           <Link to="/dashboard">
-            <button className="px-6 py-2 font-semibold text-white bg-black border border-black rounded-md hover:bg-gray-800 hover:border-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
+            <button className="px-6 py-2 font-semibold text-black hover:text-white bg-black border border-black rounded-md hover:bg-gray-800 hover:border-gray-800 focus:outline-none focus:ring-2 focus:ring-black">
               Dashboard
             </button>
           </Link>

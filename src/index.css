@@ -40,3 +40,23 @@
   cursor: pointer;
   font-size: 16px;
 }
+
+/* _____________TOOLTIPS___________________  */
+/* Tailwind CSS is already loaded */
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid;
+}
+

@@ -1,51 +1,142 @@
 import express from "express";
 import cors from "cors";
-import routes from "./routes/index.js";
-import dotenv from "dotenv";
-import pool from "./db.js";
+import bodyParser from "body-parser";
+import multer, { memoryStorage } from "multer";
+import fetch from "node-fetch";
+import { createHash } from "crypto";
+import pkg from "pg";
 
-dotenv.config();
+const { Pool } = pkg;
 
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
-const defaultQuestions = [
-  "Wave your hand.",
-  "Show your left hand.",
-  "Touch your nose.",
-  "Blink three times.",
-];
+// PostgreSQL connection
+const pool = new Pool({
+  user: "everest",
+  host: "dpg-cqj92ruehbks73c8559g-a.oregon-postgres.render.com",
+  database: "eth_kmqr",
+  password: "RlPomw3oErXYYuwgBbhDoP6cuy7hjzX2",
+  port: 5432,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-async function initializeQuestions() {
+// Middleware
+app.use(cors()); // Allow cross-origin requests
+app.use(bodyParser.json());
+
+const storage = memoryStorage();
+const upload = multer({ storage: storage });
+
+// Endpoint to verify reCAPTCHA
+app.post("/verify-recaptcha", async (req, res) => {
+  const { token, version } = req.body;
+  const secretKey =
+    version === "v3" ? RECAPTCHA_SECRET_V3 : RECAPTCHA_SECRET_V2;
+
   try {
-    const existingQuestions = await pool.query(
-      "SELECT question FROM questions"
+    const response = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `secret=${secretKey}&response=${token}`,
+      }
     );
-    const existingQuestionsSet = new Set(
-      existingQuestions.rows.map((row) => row.question)
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error verifying reCAPTCHA:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to verify reCAPTCHA" });
+  }
+});
+
+// Endpoint to get random questions
+app.get("/questions", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT question FROM questions ORDER BY RANDOM() LIMIT 10"
+    );
+    const questions = result.rows.map((row) => row.question);
+    res.json(questions);
+  } catch (error) {
+    console.error("Error fetching questions from database:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Endpoint to upload video and save hash
+app.post("/upload", upload.single("video"), async (req, res) => {
+  if (!req.file || !req.body.question) {
+    return res.status(400).send("No file or question provided.");
+  }
+
+  const videoBuffer = req.file.buffer;
+  const hash = createHash("sha256").update(videoBuffer).digest("hex");
+  const question = req.body.question;
+
+  try {
+    await pool.query(
+      "INSERT INTO video_hashes (hash, question) VALUES ($1, $2)",
+      [hash, question]
+    );
+    res.status(200).send("Video uploaded and hash saved.");
+  } catch (error) {
+    console.error("Error saving hash to database:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Endpoint to save user role and wallet address
+// Endpoint to save user role and wallet address
+app.post("/api/save-role", async (req, res) => {
+  const { walletAddress, role } = req.body;
+
+  if (!walletAddress || !role) {
+    return res
+      .status(400)
+      .json({ error: "Wallet address and role are required." });
+  }
+
+  try {
+    // Check if the address already exists
+    const result = await pool.query(
+      "SELECT role FROM roles WHERE wallet_address = $1",
+      [walletAddress]
     );
 
-    for (const question of defaultQuestions) {
-      if (!existingQuestionsSet.has(question)) {
-        await pool.query("INSERT INTO questions (question) VALUES ($1)", [
-          question,
-        ]);
-      }
+    if (result.rows.length > 0) {
+      // If the address exists, return a message indicating the role and walletAddress
+      return res.status(200).json({
+        message: `Address ${walletAddress} is already joined as ${result.rows[0].role}.`,
+        alreadyJoined: true,
+        role: result.rows[0].role,
+      });
+    } else {
+      // If the address does not exist, insert it into the database
+      await pool.query(
+        "INSERT INTO roles (wallet_address, role) VALUES ($1, $2)",
+        [walletAddress, role]
+      );
+      return res.status(200).json({
+        message: "Role saved successfully.",
+        alreadyJoined: false,
+        walletAddress,
+        role,
+      });
     }
   } catch (error) {
-    console.error("Error initializing questions:", error);
+    console.error("Error saving role to database:", error.stack);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+});
 
-// Configure CORS to allow requests from your frontend
-app.use(cors({
-  origin: 'http://localhost:5173' // Update this with the correct frontend origin
-}));
-
-app.use(express.json());
-app.use("/api", routes);
-
-app.listen(port, async () => {
-  await initializeQuestions();
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port: ${PORT}`);
 });

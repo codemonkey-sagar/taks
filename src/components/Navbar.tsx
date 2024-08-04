@@ -67,7 +67,7 @@ export default function Navbar() {
     console.log(`Selected Role: ${role}`);
 
     try {
-      const response = await fetch("http://localhost:5000/save-role", {
+      const response = await fetch("http://localhost:3001/api/save-role", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
