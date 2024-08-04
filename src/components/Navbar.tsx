@@ -7,6 +7,7 @@ import {
   UserCircleIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
+import RoleSelectionModal from "./ui/RoleSelectionModel";
 import Logo from "../../public/logo.png";
 
 declare global {
@@ -23,6 +24,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   useEffect(() => {
     if (walletAddress) {
@@ -37,6 +39,7 @@ export default function Navbar() {
         const accounts = await provider.send("eth_requestAccounts", []);
         if (Array.isArray(accounts) && typeof accounts[0] === 'string') {
           setWalletAddress(accounts[0]);
+          setIsRoleModalOpen(true); // Open the role selection modal
         } else {
           throw new Error("Unexpected response format");
         }
@@ -58,6 +61,13 @@ export default function Navbar() {
     } catch (error) {
       console.error("Failed to fetch balance:", error);
     }
+  };
+
+  const handleRoleSelection = (role: string) => {
+    console.log(`Selected Role: ${role}`);
+    // Handle the role selection here, e.g., send to backend, update state, etc.
+
+    setIsRoleModalOpen(false);
   };
 
   return (
@@ -178,6 +188,14 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Role Selection Modal */}
+      {isRoleModalOpen && (
+        <RoleSelectionModal 
+          onSelectRole={handleRoleSelection} 
+          onClose={() => setIsRoleModalOpen(false)} 
+        />
+      )}
     </header>
   );
 }
