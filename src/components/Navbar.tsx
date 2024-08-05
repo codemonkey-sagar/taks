@@ -1,30 +1,17 @@
 import { useState, useEffect } from "react";
 import { BrowserProvider } from "ethers";
-import { Link, NavLink } from "react-router-dom";
-import {
-  Bars3Icon,
-  XMarkIcon,
-  UserCircleIcon,
-  WalletIcon,
-} from "@heroicons/react/24/outline";
+import { useNavigate, NavLink } from "react-router-dom";
+import { Bars3Icon, XMarkIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import RoleSelectionModal from "./ui/RoleSelectionModel";
 import Logo from "../../public/logo.png";
-
-declare global {
-  interface Window {
-    ethereum?: {
-      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-      on: (event: string, callback: (...args: unknown[]) => void) => void;
-      removeListener: (event: string, callback: (...args: unknown[]) => void) => void;
-    };
-  }
-}
+import { useWallet } from "../context/WalletContext";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [walletAddress, setWalletAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const { walletAddress, setWalletAddress, setRole } = useWallet();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (walletAddress) {
@@ -39,7 +26,7 @@ export default function Navbar() {
         const accounts = await provider.send("eth_requestAccounts", []);
         if (Array.isArray(accounts) && typeof accounts[0] === 'string') {
           setWalletAddress(accounts[0]);
-          setIsRoleModalOpen(true); // Open the role selection modal
+          setIsRoleModalOpen(true);
         } else {
           throw new Error("Unexpected response format");
         }
@@ -56,7 +43,7 @@ export default function Navbar() {
       if (window.ethereum) {
         const provider = new BrowserProvider(window.ethereum);
         const balance = await provider.getBalance(address);
-        setBalance(parseFloat(balance).toFixed(4)); // Format balance to 4 decimal places
+        setBalance(parseFloat(balance).toFixed(4));
       }
     } catch (error) {
       console.error("Failed to fetch balance:", error);
@@ -64,8 +51,6 @@ export default function Navbar() {
   };
 
   const handleRoleSelection = async (role: string) => {
-    console.log(`Selected Role: ${role}`);
-
     try {
       const response = await fetch("http://localhost:3001/api/save-role", {
         method: "POST",
@@ -76,7 +61,8 @@ export default function Navbar() {
       });
 
       if (response.ok) {
-        console.log("Role saved successfully");
+        setRole(role); // Update the role in the context
+        navigate("/profile");
       } else {
         const errorData = await response.json();
         console.error("Failed to save role:", errorData);
@@ -91,55 +77,51 @@ export default function Navbar() {
   return (
     <header className="bg-white border-b">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
-        {/* Left - Logo */}
         <div className="flex lg:flex-1">
           <NavLink to="/" className="-m-1.5 p-1.5">
             <img alt="Logo" src={Logo} className="h-6 w-auto" />
           </NavLink>
         </div>
 
-        {/* Center - Navigation Links */}
         <div className="hidden lg:flex lg:gap-x-12">
-          <NavLink to="/home" className="text-sm font-semibold leading-6 text-gray-900">
+          <NavLink to="/home" className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
             Home
           </NavLink>
-          <NavLink to="/disputes" className="text-sm font-semibold leading-6 text-gray-900">
+          <NavLink to="/disputes" className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
             Dispute
           </NavLink>
-          <NavLink to="/dashboard" className="text-sm font-semibold leading-6 text-gray-900">
+          <NavLink to="/dashboard" className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
             Dashboard
           </NavLink>
-          <NavLink to="/awards" className="text-sm font-semibold leading-6 text-gray-900">
+          <NavLink to="/awards" className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
             Awards
           </NavLink>
-          <NavLink to="/profile" className="text-sm font-semibold leading-6 text-gray-900">
+          <NavLink to="/profile" className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
             Profile
           </NavLink>
         </div>
 
-        {/* Right - Wallet Connection */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {walletAddress ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/profile')}>
               <UserCircleIcon className="h-5 w-5 text-gray-900" />
-              <span className="text-sm font-semibold leading-6 text-gray-900">
+              <span className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
                 {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
               </span>
-              <span className="text-sm font-semibold leading-6 text-gray-900">
+              <span className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
                 ({balance} ETH)
               </span>
             </div>
           ) : (
             <button
               onClick={connectWallet}
-              className="text-sm font-semibold leading-6 text-gray-900 border-b-2 border-b-[#7DD956]"
+              className="text-sm font-semibold leading-6 text-gray-900 border-b-2 border-b-primary cursor-pointer hover:text-primary"
             >
               Connect Wallet
             </button>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -151,7 +133,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <div className={mobileMenuOpen ? "block" : "hidden"}>
         <div className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
@@ -184,19 +165,19 @@ export default function Navbar() {
               </div>
               <div className="py-6">
                 {walletAddress ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/profile')}>
                     <UserCircleIcon className="h-5 w-5 text-gray-900" />
-                    <span className="text-sm font-semibold leading-6 text-gray-900">
+                    <span className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
                       {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                     </span>
-                    <span className="text-sm font-semibold leading-6 text-gray-900">
+                    <span className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary">
                       ({balance} ETH)
                     </span>
                   </div>
                 ) : (
                   <button
                     onClick={connectWallet}
-                    className="text-sm font-semibold leading-6 text-gray-900 border-b-2 border-b-[#7DD956]"
+                    className="text-sm font-semibold leading-6 text-gray-900 border-b-2 border-b-primary cursor-pointer hover:text-primary"
                   >
                     Connect Wallet
                   </button>
@@ -207,7 +188,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Role Selection Modal */}
       {isRoleModalOpen && (
         <RoleSelectionModal 
           onSelectRole={handleRoleSelection}

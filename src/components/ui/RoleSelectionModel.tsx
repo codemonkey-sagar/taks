@@ -25,7 +25,6 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ onSelectRole, o
             });
 
             const data = await response.json();
-            console.log('Response Data:', data);
 
             if (response.ok) {
                 if (data.alreadyJoined) {

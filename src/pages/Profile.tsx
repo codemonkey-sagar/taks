@@ -2,16 +2,16 @@ import React from "react";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
-  ShieldCheckIcon,
   UserIcon,
   TrophyIcon,
   AcademicCapIcon,
   ScaleIcon,
   FireIcon,
 } from "@heroicons/react/24/solid";
+import { useWallet } from "../context/WalletContext";
 
 const Profile = () => {
-  const walletAddress = "0x6a68...8DfF"; // Replace with actual wallet address
+  const { walletAddress, role } = useWallet();
   const isVerified = true; // Set to true if the user is verified
   const badges = ["Early Adopter", "Contributor", "Top Voter"];
   const reputationRank = "Expert"; // Example rank
@@ -42,6 +42,19 @@ const Profile = () => {
     },
   ];
 
+  const getVerifiedText = () => {
+    switch (role) {
+      case "Employee":
+        return "Verified Employee";
+      case "Employer":
+        return "Verified Employer";
+      case "Judiciary":
+        return "Verified Judiciary";
+      default:
+        return "Verified User";
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8">
       <h1 className="text-4xl font-bold mb-8">Profile</h1>
@@ -65,7 +78,7 @@ const Profile = () => {
               <ExclamationCircleIcon className="h-8 w-8 text-red-500" />
             )}
             <span className="ml-2 text-lg text-gray-700">
-              {isVerified ? "Verified User" : "Not Verified"}
+              {isVerified ? getVerifiedText() : "Not Verified"}
             </span>
           </div>
         </div>

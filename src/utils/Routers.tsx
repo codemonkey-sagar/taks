@@ -1,10 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Home from "../pages/Home";
-import Index from "@/pages/Index";
-import Verification from "@/pages/Verification";
+import Profile from "@/pages/Profile";
+import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
-import Profile from "@/pages/Profile"; 
 import Dispute from "@/pages/Dispute"; 
 import Awards from "@/pages/Awards"; 
 
@@ -14,16 +12,16 @@ export const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Index />
+        <Home />
       </>
     ),
   },
   {
-    path: '/home',
+    path: '/profile',
     element: (
       <>
         <Navbar />
-        <Home />
+        <Profile />
       </>
     ),
   },
@@ -35,15 +33,6 @@ export const router = createBrowserRouter([
       <Dashboard/>
       </>
     )
-  },
-  {
-    path: "/profile",
-    element: (
-      <>
-        <Navbar />
-        <Profile />
-      </>
-    ),
   },
   {
     path: "/disputes",
@@ -62,27 +51,5 @@ export const router = createBrowserRouter([
         <Awards />
       </>
     ),
-  },
-  {
-    path: "/verification",
-    element: (
-      <>
-        <Navbar />
-        <Verification />
-      </>
-    ),
-  },
-  {
-    path: "/dashboard",
-    element: (
-      <>
-        <Navbar />
-        <Dashboard />
-      </>
-    ),
-  },
-  {
-    path: "/test",
-    element: <>Test</>,
   },
 ]);
