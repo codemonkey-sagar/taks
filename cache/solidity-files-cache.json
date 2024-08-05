@@ -1,0 +1,113 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\ashis\\OneDrive\\Documents\\DecentralizedTaks\\taks\\web3\\contracts\\daoMain.sol": {
+      "lastModificationDate": 1722816316519,
+      "contentHash": "d380ba34836f94aaa5e709334814f4ef",
+      "sourceName": "web3/contracts/daoMain.sol",
+      "solcConfig": {
+        "version": "0.8.0",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./DisputeResolution.sol",
+        "./Voting.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DaoMain"
+      ]
+    },
+    "C:\\Users\\ashis\\OneDrive\\Documents\\DecentralizedTaks\\taks\\web3\\contracts\\DisputeResolution.sol": {
+      "lastModificationDate": 1722816236976,
+      "contentHash": "17d2931f757597667f3777b79944a163",
+      "sourceName": "web3/contracts/DisputeResolution.sol",
+      "solcConfig": {
+        "version": "0.8.0",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DisputeResolution"
+      ]
+    },
+    "C:\\Users\\ashis\\OneDrive\\Documents\\DecentralizedTaks\\taks\\web3\\contracts\\Voting.sol": {
+      "lastModificationDate": 1722816249387,
+      "contentHash": "82f4f61ad34a9efe675b666df147a110",
+      "sourceName": "web3/contracts/Voting.sol",
+      "solcConfig": {
+        "version": "0.8.0",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Voting"
+      ]
+    }
+  }
+}
