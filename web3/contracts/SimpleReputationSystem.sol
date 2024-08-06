@@ -26,19 +26,19 @@ contract SimpleReputationSystem {
 
         // Initialize juror data
         jurors[_jurorAddress] = Juror({
-            reputation: 0,        // Start with 0 reputation
+            reputation: 4,        // Start with 0 reputation
             successCount: 0,      // Start with 0 successful disputes
             totalDisputes: 0,     // Start with 0 total disputes
             initialized: true    // Mark as initialized
         });
 
-        emit JurorInitialized(_jurorAddress, 0);
+        emit JurorInitialized(_jurorAddress, 4);
     }
 
     // Function to update a juror's metrics and calculate new reputation
     function updateMetrics(address _jurorAddress, uint _successCount, uint _totalDisputes) external {
         Juror storage juror = jurors[_jurorAddress];
-
+        
         require(juror.initialized, "Juror not initialized");
 
         // Update juror's metrics

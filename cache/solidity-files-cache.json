@@ -114,8 +114,8 @@
       ]
     },
     "D:\\eth toronto projects\\taks\\web3\\contracts\\SimpleReputationSystem.sol": {
-      "lastModificationDate": 1722880342789,
-      "contentHash": "6a547b9ccbc67ea0cfed3f936c357207",
+      "lastModificationDate": 1722906505209,
+      "contentHash": "bf9e02684cc41003093c6123b4ee317f",
       "sourceName": "web3/contracts/SimpleReputationSystem.sol",
       "solcConfig": {
         "version": "0.8.26",
