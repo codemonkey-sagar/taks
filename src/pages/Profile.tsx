@@ -12,6 +12,7 @@ import { useWallet } from "../context/WalletContext";
 
 const Profile = () => {
   const { walletAddress, role } = useWallet();
+  console.log(`Role: ${role}`)
   const isVerified = true; // Set to true if the user is verified
   const badges = ["Early Adopter", "Contributor", "Top Voter"];
   const reputationRank = "Expert"; // Example rank
@@ -45,13 +46,54 @@ const Profile = () => {
   const getVerifiedText = () => {
     switch (role) {
       case "Employee":
-        return "Verified Employee";
+        // return "Verified Employee";
+        return " Employee";
       case "Employer":
-        return "Verified Employer";
+        // return "Verified Employer";
+        return " Employer";
       case "Judiciary":
-        return "Verified Judiciary";
+        // return "Verified Judiciary";
+        return " Judiciary";
       default:
-        return "Verified User";
+        // return "Verified User";
+        return " User";
+    }
+  };
+
+  const renderProfileContent = () => {
+    switch (role) {
+      case "Employee":
+        return (
+          <div className="bg-white p-8 rounded-lg shadow-lg space-y-8">
+            <h2 className="text-2xl font-semibold">Employee Dashboard</h2>
+            <p>Welcome, valued employee! Here are your tasks and benefits.</p>
+            {/* Add more specific content for Employee role */}
+          </div>
+        );
+      case "Employer":
+        return (
+          <div className="bg-white p-8 rounded-lg shadow-lg space-y-8">
+            <h2 className="text-2xl font-semibold">Employer Dashboard</h2>
+            <p>Welcome, employer! Manage your teams and projects here.</p>
+            {/* Add more specific content for Employer role */}
+          </div>
+        );
+      case "Judiciary":
+        return (
+          <div className="bg-white p-8 rounded-lg shadow-lg space-y-8">
+            <h2 className="text-2xl font-semibold">Judiciary Dashboard</h2>
+            <p>Welcome, judiciary! Review and resolve disputes here.</p>
+            {/* Add more specific content for Judiciary role */}
+          </div>
+        );
+      default:
+        return (
+          <div className="bg-white p-8 rounded-lg shadow-lg space-y-8">
+            <h2 className="text-2xl font-semibold">User Dashboard</h2>
+            <p>Welcome to your dashboard. Please complete your profile.</p>
+            {/* Add more generic content */}
+          </div>
+        );
     }
   };
 
@@ -82,6 +124,8 @@ const Profile = () => {
             </span>
           </div>
         </div>
+
+        {renderProfileContent()}
 
         {/* Badges, Reputation Rank, and Certifications */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-6">
