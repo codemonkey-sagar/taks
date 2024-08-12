@@ -4,10 +4,11 @@ pragma solidity ^0.8.0;
 contract SimpleReputationSystem {
     // Define the Juror struct
     struct Juror {
-        uint reputation;      // Reputation score
-        uint successCount;    // Number of successful disputes handled
-        uint totalDisputes;   // Total number of disputes handled
-        bool initialized;     // Flag to check if the juror is initialized
+        uint reputation;
+        uint successCount;
+        uint failureCount;
+        uint totalDisputes;
+        bool initialized;
     }
 
     // Mapping to store juror data by their wallet address
@@ -15,10 +16,7 @@ contract SimpleReputationSystem {
 
     // Events
     event JurorInitialized(address indexed jurorAddress, uint initialReputation);
-    event MetricsUpdated(address indexed jurorAddress, uint successCount, uint totalDisputes, uint newReputation);
-
-    // Constructor
-    constructor() {}
+    event MetricsUpdated(address indexed jurorAddress, uint successCount, uint failureCount, uint totalDisputes, uint newReputation);
 
     // Function to initialize a new juror with default values
     function initializeJuror(address _jurorAddress) external {
@@ -26,50 +24,61 @@ contract SimpleReputationSystem {
 
         // Initialize juror data
         jurors[_jurorAddress] = Juror({
-            reputation: 4,        // Start with 0 reputation
-            successCount: 0,      // Start with 0 successful disputes
-            totalDisputes: 0,     // Start with 0 total disputes
-            initialized: true    // Mark as initialized
+            reputation: 4,
+            successCount: 0,
+            failureCount: 0,
+            totalDisputes: 0,
+            initialized: true
         });
 
         emit JurorInitialized(_jurorAddress, 4);
     }
 
-    // Function to update a juror's metrics and calculate new reputation
-    function updateMetrics(address _jurorAddress, uint _successCount, uint _totalDisputes) external {
+    // Updated function to update a juror's metrics and recalculate reputation
+    function updateMetrics(address _jurorAddress, uint _successCount, uint _failureCount) external {
         Juror storage juror = jurors[_jurorAddress];
-        
+
         require(juror.initialized, "Juror not initialized");
 
-        // Update juror's metrics
-        juror.successCount = _successCount;
-        juror.totalDisputes = _totalDisputes;
+        // Update metrics
+        juror.successCount += _successCount;
+        juror.failureCount += _failureCount;
+        juror.totalDisputes += _successCount + _failureCount;
 
-        // Calculate reputation based on success rate
+        // Recalculate reputation
         uint newReputation = calculateReputation(_jurorAddress);
-        juror.reputation = newReputation;
 
-        emit MetricsUpdated(_jurorAddress, _successCount, _totalDisputes, newReputation);
+        emit MetricsUpdated(_jurorAddress, juror.successCount, juror.failureCount, juror.totalDisputes, newReputation);
     }
 
     // Function to calculate reputation based on success rate
-    function calculateReputation(address _jurorAddress) public view returns (uint) {
-        Juror memory juror = jurors[_jurorAddress];
+    function calculateReputation(address _jurorAddress) internal returns (uint) {
+        Juror storage juror = jurors[_jurorAddress];
+        uint newReputation;
 
-        // Handle cases where totalDisputes is 0 to avoid division by zero
         if (juror.totalDisputes == 0) {
-            return 0; // Return 0 reputation if no disputes
+            newReputation = juror.reputation;
+        } else {
+            int reputationDelta = int(juror.successCount) - int(juror.failureCount);
+            newReputation = uint(max(0, min(100, int(juror.reputation) + reputationDelta)));
         }
 
-        // Calculate success rate as a percentage
-        uint successRate = (juror.successCount * 100) / juror.totalDisputes;
+        juror.reputation = newReputation;
+        return newReputation;
+    }
 
-        // Reputation is equal to the success rate
-        return successRate;
+    // Helper function for int bounds
+    function max(int a, int b) internal pure returns (int) {
+        return a >= b ? a : b;
+    }
+
+    function min(int a, int b) internal pure returns (int) {
+        return a <= b ? a : b;
     }
 
     // Function to get a juror's data
-    function getJurorData(address _jurorAddress) external view returns (Juror memory) {
-        return jurors[_jurorAddress];
+    function getJurorData(address _jurorAddress) external view returns (uint reputation, uint successCount, uint failureCount, uint totalDisputes, bool initialized) {
+        Juror memory juror = jurors[_jurorAddress];
+        return (juror.reputation, juror.successCount, juror.failureCount, juror.totalDisputes, juror.initialized);
     }
 }
